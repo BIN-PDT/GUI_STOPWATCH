@@ -96,3 +96,44 @@ class ControlFrame(ctk.CTkFrame):
                     text="RESUME",
                     text_color=GREEN_TEXT,
                 )
+
+
+class Clock(ctk.CTkCanvas):
+    def __init__(self, parent):
+        super().__init__(
+            master=parent,
+            background=BLACK,
+            bd=0,
+            highlightthickness=0,
+            relief=ctk.RIDGE,
+        )
+        self.grid(row=0, column=0, sticky=ctk.NSEW, padx=5, pady=5)
+        # SETUP.
+        self.bind("<Configure>", self.load_data)
+
+    def load_data(self, event):
+        self.SIZE = event.width, event.height
+
+        RADIUS = event.width / 2
+        self.CENTER = RADIUS, RADIUS
+        self.OUT_RADIUS = RADIUS * 0.95
+        self.INN_RADIUS = RADIUS * 0.85
+        self.MID_RADIUS = RADIUS * 0.9
+        self.NUM_RADIUS = RADIUS * 0.7
+        self.CEN_RADIUS = RADIUS * 0.2
+
+        self.draw()
+
+    def draw(self, milliseconds=0):
+        self.draw_center()
+
+    def draw_center(self):
+        self.create_oval(
+            self.CENTER[0] - CENTER_GAP,
+            self.CENTER[1] - CENTER_GAP,
+            self.CENTER[0] + CENTER_GAP,
+            self.CENTER[1] + CENTER_GAP,
+            fill=BLACK,
+            outline=ORANGE,
+            width=LINE_WIDTH,
+        )

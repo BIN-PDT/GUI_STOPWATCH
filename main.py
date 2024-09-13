@@ -20,6 +20,7 @@ class App(ctk.CTk):
         self.columnconfigure(0, weight=1, uniform="A")
         # WIDGET.
         self.timer = Timer()
+        self.clock = Clock(self)
         self.control_frame = ControlFrame(
             self, self.start, self.pause, self.resume, self.reset, self.lap
         )
