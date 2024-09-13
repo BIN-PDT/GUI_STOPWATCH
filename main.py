@@ -1,6 +1,7 @@
 import customtkinter as ctk
 from settings import *
 from widgets import *
+from timer import Timer
 
 
 class App(ctk.CTk):
@@ -18,24 +19,25 @@ class App(ctk.CTk):
         self.rowconfigure(2, weight=4, uniform="A")
         self.columnconfigure(0, weight=1, uniform="A")
         # WIDGET.
+        self.timer = Timer()
         self.control_frame = ControlFrame(
             self, self.start, self.pause, self.resume, self.reset, self.lap
         )
 
     def start(self):
-        print(self.start.__name__)
+        self.timer.start()
 
     def pause(self):
-        print(self.pause.__name__)
+        self.timer.pause()
 
     def resume(self):
-        print(self.resume.__name__)
+        self.timer.resume()
 
     def reset(self):
-        print(self.reset.__name__)
+        self.timer.reset()
 
     def lap(self):
-        print(self.lap.__name__)
+        print(self.timer.get())
 
 
 if __name__ == "__main__":
