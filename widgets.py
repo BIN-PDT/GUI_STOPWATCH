@@ -148,6 +148,7 @@ class Clock(ctk.CTkCanvas):
             outer_x = self.CENTER[0] + self.OUT_RADIUS * cos_alpha
             outer_y = self.CENTER[1] + self.OUT_RADIUS * sin_alpha
             if angle % 30 == 0:
+                # DRAW MARK.
                 inner_x = self.CENTER[0] + self.INN_RADIUS * cos_alpha
                 inner_y = self.CENTER[1] + self.INN_RADIUS * sin_alpha
                 self.create_line(
@@ -155,6 +156,15 @@ class Clock(ctk.CTkCanvas):
                     (inner_x, inner_y),
                     fill=WHITE,
                     width=LINE_WIDTH,
+                )
+                # DRAW NUMBER.
+                number_x = self.CENTER[0] + self.NUM_RADIUS * cos_alpha
+                number_y = self.CENTER[1] + self.NUM_RADIUS * sin_alpha
+                self.create_text(
+                    (number_x, number_y),
+                    fill=WHITE,
+                    text=f"{angle // 6}",
+                    font=f'"{FONT}" {CLOCK_FONT_SIZE}',
                 )
             elif angle % 6 == 0:
                 middle_x = self.CENTER[0] + self.MID_RADIUS * cos_alpha
