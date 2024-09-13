@@ -1,3 +1,4 @@
+from math import sin, cos, radians
 import customtkinter as ctk
 from settings import *
 
@@ -125,6 +126,7 @@ class Clock(ctk.CTkCanvas):
         self.draw()
 
     def draw(self, milliseconds=0):
+        self.draw_border()
         self.draw_center()
 
     def draw_center(self):
@@ -137,3 +139,29 @@ class Clock(ctk.CTkCanvas):
             outline=ORANGE,
             width=LINE_WIDTH,
         )
+
+    def draw_border(self):
+        for angle in range(360):
+            sin_alpha = sin(radians(angle - 90))
+            cos_alpha = cos(radians(angle - 90))
+
+            outer_x = self.CENTER[0] + self.OUT_RADIUS * cos_alpha
+            outer_y = self.CENTER[1] + self.OUT_RADIUS * sin_alpha
+            if angle % 30 == 0:
+                inner_x = self.CENTER[0] + self.INN_RADIUS * cos_alpha
+                inner_y = self.CENTER[1] + self.INN_RADIUS * sin_alpha
+                self.create_line(
+                    (outer_x, outer_y),
+                    (inner_x, inner_y),
+                    fill=WHITE,
+                    width=LINE_WIDTH,
+                )
+            elif angle % 6 == 0:
+                middle_x = self.CENTER[0] + self.MID_RADIUS * cos_alpha
+                middle_y = self.CENTER[1] + self.MID_RADIUS * sin_alpha
+                self.create_line(
+                    (outer_x, outer_y),
+                    (middle_x, middle_y),
+                    fill=GREY,
+                    width=LINE_WIDTH,
+                )
