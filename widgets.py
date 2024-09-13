@@ -221,3 +221,78 @@ class Clock(ctk.CTkCanvas):
         hours = f"{hours:02} : " if hours > 0 else ""
 
         return hours + minutes + seconds
+
+
+class LapContainer(ctk.CTkFrame):
+    def __init__(self, parent):
+        super().__init__(master=parent, fg_color=BLACK)
+        self.grid(row=2, column=0, sticky=ctk.NSEW, padx=5, pady=5)
+        # WIDGET.
+        self.canvas = None
+
+    def clear(self):
+        if self.canvas:
+            self.canvas.pack_forget()
+
+    def load_data(self, data):
+        self.clear()
+        # CALCULATE DATA.
+        ITEM_NUMBER = len(data)
+        LIST_HEIGHT = ITEM_NUMBER * LAP_ITEM_HEIGHT
+        IS_SCROLLABLE = LIST_HEIGHT > self.winfo_height()
+        SCROLL_HEIGHT = max(LIST_HEIGHT, self.winfo_height())
+        # CREATE CANVAS.
+        self.canvas = ctk.CTkCanvas(
+            master=self,
+            background=BLACK,
+            bd=0,
+            highlightthickness=0,
+            relief=ctk.RIDGE,
+            scrollregion=(0, 0, self.winfo_width(), SCROLL_HEIGHT),
+        )
+        self.canvas.pack(expand=True, fill=ctk.BOTH)
+        # SCROLL BAR.
+        if IS_SCROLLABLE:
+            self.canvas.bind_all(
+                "<MouseWheel>",
+                lambda event: self.canvas.yview_scroll(-int(event.delta / 60), "units"),
+            )
+        # CREATE DATA FRAME.
+        ITEM_FONT = ctk.CTkFont(FONT, 14, "bold")
+        frame = ctk.CTkFrame(master=self, fg_color=BLACK)
+        for index, record in enumerate(data):
+            is_final = index == ITEM_NUMBER - 1
+            self.initialize_item(frame, record, is_final, ITEM_FONT)
+        # DRAW DATA FRAME IN CANVAS.
+        self.canvas.create_window(
+            (0, 0),
+            width=self.winfo_width(),
+            height=LIST_HEIGHT,
+            window=frame,
+            anchor=ctk.NW,
+        )
+
+    def initialize_item(self, parent, data, is_final, font):
+        item_frame = ctk.CTkFrame(master=parent, fg_color=BLACK)
+        data_frame = ctk.CTkFrame(master=item_frame, fg_color=BLACK)
+        # DISPLAY DATA.
+        ctk.CTkLabel(
+            master=data_frame,
+            text=f"{data[0]} {data[1]}",
+            font=font,
+        ).pack(side=ctk.LEFT, padx=10)
+        ctk.CTkLabel(
+            master=data_frame,
+            text=f"{Clock.strftime(data[2])}",
+            font=font,
+        ).pack(side=ctk.RIGHT, padx=10)
+        # DISPLAY LINE.
+        if not is_final:
+            ctk.CTkFrame(
+                master=item_frame,
+                height=2,
+                fg_color=GREY,
+            ).pack(side=ctk.BOTTOM, fill=ctk.X)
+
+        data_frame.pack(expand=ctk.TRUE, fill=ctk.BOTH, pady=5)
+        item_frame.pack(fill=ctk.X)

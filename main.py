@@ -21,11 +21,13 @@ class App(ctk.CTk):
         # DATA.
         self.timer = Timer()
         self.is_active = False
+        self.laps_list = []
         # WIDGET.
         self.clock = Clock(self)
         self.control_frame = ControlFrame(
             self, self.start, self.pause, self.resume, self.reset, self.lap
         )
+        self.lap_container = LapContainer(self)
 
     def animate(self):
         if self.is_active:
@@ -40,6 +42,7 @@ class App(ctk.CTk):
     def pause(self):
         self.is_active = False
         self.timer.pause()
+        self.lap("PAUSE")
 
     def resume(self):
         self.is_active = True
@@ -50,8 +53,18 @@ class App(ctk.CTk):
         self.timer.reset()
         self.clock.draw()
 
-    def lap(self):
-        print(self.timer.get())
+        self.laps_list.clear()
+        self.lap_container.clear()
+
+    def lap(self, type="LAP"):
+        index = (
+            str(sum(1 for item in self.laps_list if item[0] == "LAP") + 1)
+            if type == "LAP"
+            else ""
+        )
+
+        self.laps_list.append((type, index, self.timer.get()))
+        self.lap_container.load_data(self.laps_list)
 
 
 if __name__ == "__main__":
