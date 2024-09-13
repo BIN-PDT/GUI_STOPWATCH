@@ -217,7 +217,7 @@ class Clock(ctk.CTkCanvas):
         hours, minutes = divmod(minutes, 60)
         # FORMAT TIME.
         seconds = f"{seconds:02} . {remainders // 10:02}"
-        minutes = f"{minutes:02} : " if minutes > 0 else ""
+        minutes = f"{minutes:02} : " if minutes > 0 or hours > 0 else ""
         hours = f"{hours:02} : " if hours > 0 else ""
 
         return hours + minutes + seconds
