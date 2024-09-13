@@ -126,8 +126,14 @@ class Clock(ctk.CTkCanvas):
         self.draw()
 
     def draw(self, milliseconds=0):
+        # CALCULATE ANGLE.
+        seconds = milliseconds / 1000
+        angle = (seconds % 60) * 6
+        # DISCARD BEFORE DRAWING.
+        self.delete(ctk.ALL)
+        # DRAW.
         self.draw_border()
-        self.draw_handle()
+        self.draw_handle(angle)
         self.draw_center()
 
     def draw_center(self):
@@ -177,7 +183,7 @@ class Clock(ctk.CTkCanvas):
                     width=LINE_WIDTH,
                 )
 
-    def draw_handle(self, angle=0):
+    def draw_handle(self, angle):
         sin_alpha = sin(radians(angle - 90))
         cos_alpha = cos(radians(angle - 90))
         # OUTER POINT.

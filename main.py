@@ -18,24 +18,37 @@ class App(ctk.CTk):
         self.rowconfigure(1, weight=1, uniform="A")
         self.rowconfigure(2, weight=4, uniform="A")
         self.columnconfigure(0, weight=1, uniform="A")
-        # WIDGET.
+        # DATA.
         self.timer = Timer()
+        self.is_active = False
+        # WIDGET.
         self.clock = Clock(self)
         self.control_frame = ControlFrame(
             self, self.start, self.pause, self.resume, self.reset, self.lap
         )
 
+    def animate(self):
+        if self.is_active:
+            self.clock.draw(self.timer.get())
+            self.after(FRAMERATE, self.animate)
+
     def start(self):
+        self.is_active = True
         self.timer.start()
+        self.animate()
 
     def pause(self):
+        self.is_active = False
         self.timer.pause()
 
     def resume(self):
+        self.is_active = True
         self.timer.resume()
+        self.animate()
 
     def reset(self):
         self.timer.reset()
+        self.clock.draw()
 
     def lap(self):
         print(self.timer.get())
