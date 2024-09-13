@@ -62,9 +62,8 @@ class App(ctk.CTk):
             if type == "LAP"
             else ""
         )
-
         self.laps_list.append((type, index, self.timer.get()))
-        self.lap_container.load_data(self.laps_list)
+        self.lap_container.draw_list(self.laps_list)
 
 
 if __name__ == "__main__":

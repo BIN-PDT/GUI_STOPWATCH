@@ -110,18 +110,18 @@ class Clock(ctk.CTkCanvas):
         )
         self.grid(row=0, column=0, sticky=ctk.NSEW, padx=5, pady=5)
         # SETUP.
-        self.bind("<Configure>", self.load_data)
+        self.bind("<Configure>", self.on_load)
 
-    def load_data(self, event):
-        self.SIZE = event.width, event.height
-
+    def on_load(self, event):
         RADIUS = event.width / 2
         self.CENTER = RADIUS, RADIUS
+        # FOR DRAWING MARK.
         self.OUT_RADIUS = RADIUS * 0.95
+        self.MID_RADIUS = RADIUS * 0.90
         self.INN_RADIUS = RADIUS * 0.85
-        self.MID_RADIUS = RADIUS * 0.9
-        self.NUM_RADIUS = RADIUS * 0.7
-        self.CEN_RADIUS = RADIUS * 0.2
+        # FOR DRAWING NUMBER & HANDLE.
+        self.NUMBER_RADIUS = RADIUS * 0.7
+        self.HANDLE_RADIUS = RADIUS * 0.2
 
         self.draw()
 
@@ -166,8 +166,8 @@ class Clock(ctk.CTkCanvas):
                     width=LINE_WIDTH,
                 )
                 # DRAW NUMBER.
-                number_x = self.CENTER[0] + self.NUM_RADIUS * cos_alpha
-                number_y = self.CENTER[1] + self.NUM_RADIUS * sin_alpha
+                number_x = self.CENTER[0] + self.NUMBER_RADIUS * cos_alpha
+                number_y = self.CENTER[1] + self.NUMBER_RADIUS * sin_alpha
                 self.create_text(
                     (number_x, number_y),
                     fill=WHITE,
@@ -191,8 +191,8 @@ class Clock(ctk.CTkCanvas):
         outer_x = self.CENTER[0] + self.OUT_RADIUS * cos_alpha
         outer_y = self.CENTER[1] + self.OUT_RADIUS * sin_alpha
         # INNER POINT.
-        inner_x = self.CENTER[0] - self.CEN_RADIUS * cos_alpha
-        inner_y = self.CENTER[1] - self.CEN_RADIUS * sin_alpha
+        inner_x = self.CENTER[0] - self.HANDLE_RADIUS * cos_alpha
+        inner_y = self.CENTER[1] - self.HANDLE_RADIUS * sin_alpha
         self.create_line(
             (inner_x, inner_y),
             (outer_x, outer_y),
@@ -234,10 +234,11 @@ class LapContainer(ctk.CTkFrame):
         if self.canvas:
             self.canvas.pack_forget()
 
-    def load_data(self, data):
+    def draw_list(self, laps_list):
+        # CLEAR BEFORE DRAWING.
         self.clear()
         # CALCULATE DATA.
-        ITEM_NUMBER = len(data)
+        ITEM_NUMBER = len(laps_list)
         LIST_HEIGHT = ITEM_NUMBER * LAP_ITEM_HEIGHT
         IS_SCROLLABLE = LIST_HEIGHT > self.winfo_height()
         SCROLL_HEIGHT = max(LIST_HEIGHT, self.winfo_height())
@@ -260,9 +261,9 @@ class LapContainer(ctk.CTkFrame):
         # CREATE DATA FRAME.
         ITEM_FONT = ctk.CTkFont(FONT, 14, "bold")
         frame = ctk.CTkFrame(master=self, fg_color=BLACK)
-        for index, record in enumerate(data):
+        for index, item in enumerate(laps_list):
             is_final = index == ITEM_NUMBER - 1
-            self.initialize_item(frame, record, is_final, ITEM_FONT)
+            self.draw_item(frame, item, is_final, ITEM_FONT)
         # DRAW DATA FRAME IN CANVAS.
         self.canvas.create_window(
             (0, 0),
@@ -272,18 +273,20 @@ class LapContainer(ctk.CTkFrame):
             anchor=ctk.NW,
         )
 
-    def initialize_item(self, parent, data, is_final, font):
+    def draw_item(self, parent, item, is_final, font):
         item_frame = ctk.CTkFrame(master=parent, fg_color=BLACK)
         data_frame = ctk.CTkFrame(master=item_frame, fg_color=BLACK)
+        data_frame.pack(expand=ctk.TRUE, fill=ctk.BOTH, pady=5)
+        item_frame.pack(fill=ctk.X)
         # DISPLAY DATA.
         ctk.CTkLabel(
             master=data_frame,
-            text=f"{data[0]} {data[1]}",
+            text=f"{item[0]} {item[1]}",
             font=font,
         ).pack(side=ctk.LEFT, padx=10)
         ctk.CTkLabel(
             master=data_frame,
-            text=f"{Clock.strftime(data[2])}",
+            text=f"{Clock.strftime(item[2])}",
             font=font,
         ).pack(side=ctk.RIGHT, padx=10)
         # DISPLAY LINE.
@@ -293,6 +296,3 @@ class LapContainer(ctk.CTkFrame):
                 height=2,
                 fg_color=GREY,
             ).pack(side=ctk.BOTTOM, fill=ctk.X)
-
-        data_frame.pack(expand=ctk.TRUE, fill=ctk.BOTH, pady=5)
-        item_frame.pack(fill=ctk.X)
