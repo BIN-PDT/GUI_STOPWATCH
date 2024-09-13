@@ -65,7 +65,13 @@ class ControlFrame(ctk.CTkFrame):
     def update_buttons(self):
         match self.state:
             case "OFF":
-                pass
+                self.lap_button.configure(
+                    fg_color=GREY,
+                    text="LAP",
+                    state=ctk.DISABLED,
+                )
+
+                self.run_button.configure(text="START")
             case "ON":
                 self.lap_button.configure(
                     fg_color=ORANGE_DARK,
@@ -74,5 +80,19 @@ class ControlFrame(ctk.CTkFrame):
                     text_color=ORANGE_DARK_TEXT,
                     state=ctk.NORMAL,
                 )
+
+                self.run_button.configure(
+                    fg_color=RED,
+                    hover_color=RED_HIGHLIGHT,
+                    text="STOP",
+                    text_color=RED_TEXT,
+                )
             case "PAUSE":
-                pass
+                self.lap_button.configure(text="RESET")
+
+                self.run_button.configure(
+                    fg_color=GREEN,
+                    hover_color=GREEN_HIGHLIGHT,
+                    text="RESUME",
+                    text_color=GREEN_TEXT,
+                )
