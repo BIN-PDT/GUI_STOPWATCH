@@ -134,6 +134,7 @@ class Clock(ctk.CTkCanvas):
         # DRAW.
         self.draw_border()
         self.draw_handle(angle)
+        self.draw_milestone(milliseconds)
         self.draw_center()
 
     def draw_center(self):
@@ -198,3 +199,25 @@ class Clock(ctk.CTkCanvas):
             fill=ORANGE,
             width=LINE_WIDTH,
         )
+
+    def draw_milestone(self, milliseconds):
+        self.create_text(
+            (self.CENTER[0], self.CENTER[1] + 50),
+            fill=WHITE,
+            text=Clock.strftime(milliseconds),
+            font=f'"{FONT}" {TIME_FONT_SIZE} bold',
+            anchor=ctk.CENTER,
+        )
+
+    @staticmethod
+    def strftime(milliseconds):
+        # SPLIT TIME INTO COMPONENTS.
+        seconds, remainders = divmod(milliseconds, 1000)
+        minutes, seconds = divmod(seconds, 60)
+        hours, minutes = divmod(minutes, 60)
+        # FORMAT TIME.
+        seconds = f"{seconds:02} . {remainders // 10:02}"
+        minutes = f"{minutes:02} : " if minutes > 0 else ""
+        hours = f"{hours:02} : " if hours > 0 else ""
+
+        return hours + minutes + seconds
